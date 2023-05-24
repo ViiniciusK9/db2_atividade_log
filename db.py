@@ -12,7 +12,6 @@ password = os.getenv('PASSWORD')
 port = os.getenv('PORT')
 
 class DB:
-    
     connection = psycopg2.connect(
         dbname= database,
         host= host,
@@ -20,9 +19,7 @@ class DB:
         password= password,
         port= port
     )
-    
 
-    print(connection)
     
     def create(self, name : str, columns : list):
         drop_table_if_exists_query = f"DROP TABLE IF EXISTS public.{name}"
@@ -55,19 +52,17 @@ class DB:
                 cursor.close()
                 self.connection.commit()
         
-        
     
-    
-    def fill_table(self, name : str, dados : list):
+    def fill_table(self, name : str, data : list):
         insert_query = f"INSERT INTO public.{name} VALUES"
         
         # Concatenando os dados
-        for i in range(len(dados[0])):
+        for i in range(len(data[0])):
             insert_query += " ("
-            for j in range(len(dados)):
-                insert_query += f"{dados[j][i]}" + ( "," if (j != len(dados)-1) else "" )
+            for j in range(len(data)):
+                insert_query += f"{data[j][i]}" + ( "," if (j != len(data)-1) else "" )
                 
-            insert_query += ( ")," if (i != len(dados[0])-1) else ") " )
+            insert_query += ( ")," if (i != len(data[0])-1) else ") " )
         
         # Executando a query para inserção
 
@@ -80,5 +75,6 @@ class DB:
                 cursor.close()
                 self.connection.commit()
        
-        
+    
+
         
