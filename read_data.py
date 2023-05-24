@@ -67,6 +67,19 @@ class RM:
         return tag_redo, tag_undu, tr_list
     
 
+    def split_tr(self, tr_list : list, redo : set, undu : set) -> list:
+        redo_list = list()
+        undu_list = list()
+        
+        for tr in tr_list:
+            if (tr.get_title() in redo):
+                redo_list.append(tr)
+            else:
+                undu_list.append(tr)
+
+        return redo_list, undu_list
+
+
 def get_name_table_1(path_json) -> str:
         with open(path_json, "r") as my_json:
             data = json.load(my_json)

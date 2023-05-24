@@ -17,9 +17,12 @@ log_list = read_data.get_log_list()
 
 redo, undu, tr_list = read_data.get_redo_undu_tr(log_list)
 
+redo_list, undu_list = read_data.split_tr(tr_list, redo, undu)
+
 
 print(redo)
 print(undu)
 print(tr_list)
 
-
+print(redo_list)
+print(undu_list)
