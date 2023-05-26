@@ -1,10 +1,10 @@
 import psycopg2
 import dotenv
 import os
+from tr import TR
 
 
 dotenv.load_dotenv(dotenv.find_dotenv())
-
 database = os.getenv('DATABASE')
 host = os.getenv('HOST')
 user = os.getenv('USER')
@@ -76,5 +76,19 @@ class DB:
                 self.connection.commit()
        
     
+    def update(self, name : str, tr : TR):
+        update_query = f"UPDATE {name.lower()} SET {tr.get_column().lower()} = '{tr.get_new()}' WHERE id = '{tr.get_id()}'"
+        print(update_query)
+        with self.connection.cursor() as cursor:
+            try:
+                cursor.execute(update_query)
+            except Exception as e:
+                print("Ocorreu um erro ao dar update.", e)
+            finally:
+                cursor.close()
+                self.connection.commit()
+    
 
-        
+    
+    
+    

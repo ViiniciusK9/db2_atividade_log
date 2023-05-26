@@ -84,5 +84,3 @@ def get_name_table_1(path_json) -> str:
         with open(path_json, "r") as my_json:
             data = json.load(my_json)
         return list(data.keys())[0]
-    
-        
