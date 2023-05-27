@@ -14,17 +14,34 @@ database.create(name=name_table, columns=columns_list)
 database.fill_table(name=name_table, data=data_list)
 
 log_list = read_data.get_log_list()
-redo, undu, tr_list = read_data.get_redo_undu_tr(log_list)
-redo_list, undu_list = read_data.split_tr(tr_list, redo, undu)
+redo, undo, tr_list = read_data.get_redo_undo_tr(log_list)
+redo_list, undo_list = read_data.split_tr(tr_list, redo, undo)
 
 # Realizando os updates de todas as transações
 for tr in tr_list:
     database.update(name_table, tr)
 
+
+print("As seguintes transações irão fazer REDO: ", end="")
+for tr in redo:
+    print(tr, end=", ")
+print()
+
+print("As seguintes transações irão fazer UNDO: ", end="")
+for tr in undo:
+    print(tr, end=", ")
+print()
+
+for tr in redo_list:
+    database.redo(name_table, tr)
+
+for tr in undo_list:
+    database.undo(name_table, tr)
+
 print(redo)
-print(undu)
+print(undo)
 print(tr_list)
 print(redo_list)
-print(undu_list)
+print(undo_list)
 
 "UPDATE public.initial SET id=?, a=?, b=? WHERE <condition>;"

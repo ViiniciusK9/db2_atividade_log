@@ -28,7 +28,7 @@ class DB:
         try:
             with self.connection.cursor() as cursor:
                 try:
-                    cursor.execute(drop_table_if_exists_query)
+                    cursor.execute(drop_table_if_exists_query)  
                 except:
                     print("Ocorreu um erro ao dropar a tabela.")
         except:
@@ -89,6 +89,50 @@ class DB:
                 self.connection.commit()
     
 
+    def redo(self, name : str, tr : TR):
+        select_query = f"SELECT {tr.get_column().lower()} FROM {name} WHERE id = '{tr.get_id()}'"
+        with self.connection.cursor() as cursor:
+            try:
+                cursor.execute(select_query)
+                return_data = cursor.fetchall()
+                if (return_data[0][0] == tr.get_new()):
+                    pass
+                else:
+                    update_query = f"UPDATE {name.lower()} SET {tr.get_column()} = '{tr.get_new()}' WHERE id = '{tr.get_id()}'"
+                    print(update_query)
+                    print(tr.get_title(), " Deu Update ")
+                    try:
+                        cursor.execute(update_query)
+                    except Exception as e:
+                        print("Ocorreu um erro ao dar update.", e)
+            except Exception as e:
+                print("Ocorreu um erro ao dar select.", e)
+            finally:
+                cursor.close()
+                self.connection.commit()
+        
+
+                
     
-    
+    def undo(self, name : str, tr : TR):
+        select_query = f"SELECT {tr.get_column().lower()} FROM {name} WHERE id = '{tr.get_id()}'"
+        with self.connection.cursor() as cursor:
+            try:
+                cursor.execute(select_query)
+                return_data = cursor.fetchall()
+                if (return_data[0][0] == tr.get_old()):
+                    pass
+                else:
+                    update_query = f"UPDATE {name.lower()} SET {tr.get_column()} = '{tr.get_old()}' WHERE id = '{tr.get_id()}'"
+                    print(update_query)
+                    print(tr.get_title(), " Deu Update ")
+                    try:
+                        cursor.execute(update_query)
+                    except Exception as e:
+                        print("Ocorreu um erro ao dar update.", e)
+            except Exception as e:
+                print("Ocorreu um erro ao dar select.", e)
+            finally:
+                cursor.close()
+                self.connection.commit()
     

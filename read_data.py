@@ -46,25 +46,25 @@ class RM:
         return log
 
 
-    def get_redo_undu_tr(self, log : list) -> list:
+    def get_redo_undo_tr(self, log : list) -> list:
         tag_redo = set()
-        tag_undu = set()
+        tag_undo = set()
         tr_list = list()
         
         for row in log:
             aux = row.split(" ")
             if (len(aux) == 2):        
                 if (aux[0] == "start"):
-                    tag_undu.add(aux[1])
+                    tag_undo.add(aux[1])
                 else:
-                    tag_undu.remove(aux[1])
+                    tag_undo.remove(aux[1])
                     tag_redo.add(aux[1])
             else:
                 a = list(row.split(","))
                 tr1 = TR(*a)
                 tr_list.append(tr1)
         
-        return tag_redo, tag_undu, tr_list
+        return tag_redo, tag_undo, tr_list
     
 
     def split_tr(self, tr_list : list, redo : set, undu : set) -> list:
