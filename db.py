@@ -65,12 +65,11 @@ class DB:
             insert_query += ( ")," if (i != len(data[0])-1) else ") " )
         
         # Executando a query para inserção
-
         with self.connection.cursor() as cursor:
             try:
                 cursor.execute(insert_query)
             except:
-                print("Ocorreu um erro ao criar a tabela.")
+                print("Ocorreu um erro ao inserir na tabela.")
             finally:
                 cursor.close()
                 self.connection.commit()
@@ -78,7 +77,6 @@ class DB:
     
     def update(self, name : str, tr : TR):
         update_query = f"UPDATE {name.lower()} SET {tr.get_column().lower()} = '{tr.get_new()}' WHERE id = '{tr.get_id()}'"
-        print(update_query)
         with self.connection.cursor() as cursor:
             try:
                 cursor.execute(update_query)
@@ -95,12 +93,10 @@ class DB:
             try:
                 cursor.execute(select_query)
                 return_data = cursor.fetchall()
-                if (return_data[0][0] == tr.get_new()):
-                    pass
-                else:
+                
+                # Caso o dado atual seja diferente do novo, realizamos o update.
+                if (return_data[0][0] != tr.get_new()):
                     update_query = f"UPDATE {name.lower()} SET {tr.get_column()} = '{tr.get_new()}' WHERE id = '{tr.get_id()}'"
-                    print(update_query)
-                    print(tr.get_title(), " Deu Update ")
                     try:
                         cursor.execute(update_query)
                     except Exception as e:
@@ -111,8 +107,6 @@ class DB:
                 cursor.close()
                 self.connection.commit()
         
-
-                
     
     def undo(self, name : str, tr : TR):
         select_query = f"SELECT {tr.get_column().lower()} FROM {name} WHERE id = '{tr.get_id()}'"
@@ -120,12 +114,10 @@ class DB:
             try:
                 cursor.execute(select_query)
                 return_data = cursor.fetchall()
-                if (return_data[0][0] == tr.get_old()):
-                    pass
-                else:
+                
+                # Caso o dado atual seja igual ao que foi modificado, voltamos para o antigo.
+                if (return_data[0][0] == tr.get_new()):
                     update_query = f"UPDATE {name.lower()} SET {tr.get_column()} = '{tr.get_old()}' WHERE id = '{tr.get_id()}'"
-                    print(update_query)
-                    print(tr.get_title(), " Deu Update ")
                     try:
                         cursor.execute(update_query)
                     except Exception as e:
@@ -136,3 +128,14 @@ class DB:
                 cursor.close()
                 self.connection.commit()
     
+    
+    def select_all(self, name : str) -> list:
+        select_query = f"SELECT * FROM {name}"
+        with self.connection.cursor() as cursor:
+            try:
+                cursor.execute(select_query)
+                return cursor.fetchall()    
+            except:
+                print("Erro ao printar o banco de dados")
+        return list()
+        
